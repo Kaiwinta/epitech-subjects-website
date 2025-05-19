@@ -14,6 +14,7 @@
 
 ```
 $ npm install
+$ npm install docusaurus
 $ npm start
 ```
 

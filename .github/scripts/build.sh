@@ -41,15 +41,18 @@ find "$src_path" -type d -print0 | while IFS= read -r -d '' dir; do
         done
         echo -e "---\n> Timeline: ?\n\n" >> "$abs_path.mdx"
         # Complete the .mdx file with the content of the directory
-        echo -e "## Files 📂\n\n:::note 2020 Subject and Files" >> "$abs_path.mdx"
+        echo -e "## Files 📂\n\n:::note 2025 Subject and Files" >> "$abs_path.mdx"
         find "$dir" -maxdepth 1 -type f -not -name '*.md' -not -name 'tests.txt' -exec bash -c 'string="$1"; filename=$(basename "$string"); echo "- [$filename]($string)"' _ {} \; >> "$abs_path.mdx"
         echo -e ":::\n" >> "$abs_path.mdx"
-        if [ -f "$dir/tests.txt" ]; then
-            # Add the tests in the .mdx file
-            echo -e "## Tests 🤖\n<details>\n  <summary>Toggle to see the tests</summary>\n  <div>" >> "$abs_path.mdx"
-            cat "$dir/tests.txt" >> "$abs_path.mdx"
-            echo -e "  </div>\n</details>\n" >> "$abs_path.mdx"
+        if [ -f "$dir/readme.md" ]; then
+            sed -n '/<details>/,/<\/details>/p' "$dir/readme.md" >> "temp.mdx"
+            if [ -s "temp.mdx" ]; then
+                echo -e "## Description 📖\n<details>\n  <summary>Toggle to see the description</summary>\n  <div>" >> "$abs_path.mdx"
+                cat temp.mdx >> "$abs_path.mdx"
+                echo -e "  </div>\n</details>\n" >> "$abs_path.mdx"
+            fi
         fi
+
         sed -i '' -e 's|./subjects/|https://github.com/Studio-17/Epitech-Subjects/raw/main/|g' "$abs_path.mdx"
     else
         # Create the folder in the 'docs' folder
