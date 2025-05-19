@@ -49,9 +49,9 @@ find "$src_path" -type d -print0 | while IFS= read -r -d '' dir; do
             if [ -s "temp.mdx" ]; then
                 echo -e "## Description 📖\n<details>\n  <summary>Toggle to see the description</summary>\n  <div>" >> "$abs_path.mdx"
                 cat temp.mdx >> "$abs_path.mdx"
-                rm temp.mdx
                 echo -e "  </div>\n</details>\n" >> "$abs_path.mdx"
             fi
+            rm temp.mdx
         fi
 
         sed -i '' -e 's|./subjects/|https://github.com/Studio-17/Epitech-Subjects/raw/main/|g' "$abs_path.mdx"
@@ -64,6 +64,11 @@ find "$src_path" -type d -print0 | while IFS= read -r -d '' dir; do
         echo "{\"label\": \"${rel_path##*/}\",\"link\": {\"type\": \"generated-index\", \"description\": \"?\"}}" >> "$abs_path/_category_.json"
     fi
 done
+
+find docs -type f -name "*.mdx" -exec perl -pi -e 's/rowspan="(\d+)"/rowSpan={$1}/g' {} +
+find docs -type f -name "*.mdx" -exec sed -i 's/style="text-align: center;"/style={{ textAlign: "center" }}/g' {} +
+find docs -type f -name "*.mdx" -exec perl -pi -e 's/colspan="(\d+)"/colSpan={$1}/g' {} +
+
 
 # Delete the folders that we don't need anymore
 rm -rf ./subjects
