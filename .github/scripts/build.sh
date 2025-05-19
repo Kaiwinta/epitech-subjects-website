@@ -45,10 +45,11 @@ find "$src_path" -type d -print0 | while IFS= read -r -d '' dir; do
         find "$dir" -maxdepth 1 -type f -not -name '*.md' -not -name 'tests.txt' -exec bash -c 'string="$1"; filename=$(basename "$string"); echo "- [$filename]($string)"' _ {} \; >> "$abs_path.mdx"
         echo -e ":::\n" >> "$abs_path.mdx"
         if [ -f "$dir/readme.md" ]; then
-            sed -n '/<details>/,/<\/details>/p' "$dir/readme.md" >> "temp.mdx"
+            sed -n '/<details>/,/<\/details>/p' "$dir/readme.md" > "temp.mdx"
             if [ -s "temp.mdx" ]; then
                 echo -e "## Description 📖\n<details>\n  <summary>Toggle to see the description</summary>\n  <div>" >> "$abs_path.mdx"
                 cat temp.mdx >> "$abs_path.mdx"
+                rm temp.mdx
                 echo -e "  </div>\n</details>\n" >> "$abs_path.mdx"
             fi
         fi
